@@ -1,0 +1,772 @@
+<div class="tactical-setup-page">
+  <div class="page-header">
+    <h2 class="page-title">Impostazioni Tattiche</h2>
+    <div class="page-actions">
+      <button class="button button-secondary load-tactics-btn">
+        📂 Carica Tattica
+      </button>
+      <button class="button button-primary save-tactics-btn">
+        💾 Salva Tattica
+      </button>
+    </div>
+  </div>
+  
+  <!-- Formation Selection Section -->
+  <div class="formation-selection-section">
+    <div id="formationSelectorContainer"></div>
+  </div>
+  
+  <!-- Tactical Setup Grid -->
+  <div class="tactical-setup-grid">
+    <!-- Field Column -->
+    <div class="field-column">
+      <div class="column-header">
+        <h3>Campo</h3>
+        <div class="field-actions">
+          <button class="button button-ghost guidelines-toggle-btn" aria-pressed="false">
+            📏 Linee Guida
+          </button>
+          <button class="button button-ghost copy-formation-btn">
+            📋 Copia Formazione
+          </button>
+        </div>
+      </div>
+      
+      <div id="tacticalFieldContainer"></div>
+    </div>
+    
+    <!-- Mentality Column -->
+    <div class="mentality-column">
+      <div class="column-header">
+        <h3>Mentalità</h3>
+        <div class="mentality-actions">
+          <select id="mentalityPreset" class="mentality-preset-select">
+            <option value="">Preset personalizzato</option>
+            <option value="defensive">Difensivo</option>
+            <option value="balanced">Equilibrato</option>
+            <option value="attacking">Offensivo</option>
+            <option value="counter">Contropiede</option>
+          </select>
+        </div>
+      </div>
+      
+      <div id="mentalitySlidersContainer"></div>
+    </div>
+  </div>
+  
+  <!-- Set Pieces Section -->
+  <div class="set-pieces-section">
+    <div class="section-header">
+      <h3>Calci Piazzati</h3>
+    </div>
+    
+    <div id="setPieceManagerContainer"></div>
+  </div>
+  
+  <!-- Tactical Preview Section -->
+  <div class="tactical-preview-section">
+    <div class="section-header">
+      <h3>Anteprima Tattica</h3>
+    </div>
+    
+    <div id="tacticalPreviewContainer"></div>
+  </div>
+  
+  <!-- Sponsor Banner -->
+  <div id="sponsorBannerContainer" class="sponsor-banner-container"></div>
+  
+  <!-- Save Confirmation Modal -->
+  <div id="saveConfirmModal" class="modal" role="dialog" aria-modal="true" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Salva Tattica</h2>
+        <button class="modal-close-btn" aria-label="Chiudi">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="tacticName" class="form-label">Nome Tattica</label>
+          <input type="text" id="tacticName" class="form-input" placeholder="Inserisci un nome per la tattica">
+        </div>
+        <div class="form-group">
+          <label for="tacticDescription" class="form-label">Descrizione</label>
+          <textarea id="tacticDescription" class="form-textarea" placeholder="Descrivi brevemente questa tattica"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="button button-ghost" id="cancelSaveBtn">Annulla</button>
+        <button class="button button-primary" id="confirmSaveBtn">Salva Tattica</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Load Tactics Modal -->
+  <div id="loadTacticsModal" class="modal" role="dialog" aria-modal="true" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Carica Tattica</h2>
+        <button class="modal-close-btn" aria-label="Chiudi">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="tactics-list" id="savedTacticsList">
+          <!-- Saved tactics will be populated here -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="button button-ghost" id="cancelLoadBtn">Annulla</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+class TacticalSetupPage {
+  constructor() {
+    this.players = [];
+    this.tactics = {
+      formation: '4-4-2',
+      positions: {},
+      mentality: {
+        mentality: 50,
+        tempo: 50,
+        width: 50,
+        pressing: 50,
+        creativity: 50,
+        directness: 50
+      },
+      setPieces: {
+        corners: {
+          taker: null,
+          nearPost: null,
+          farPost: null,
+          centerArea: null,
+          support: null,
+          strategy: 'direct'
+        },
+        freekicks: {
+          closePrimary: null,
+          closeSecondary: null,
+          farPrimary: null,
+          farSecondary: null
+        },
+        penalties: {
+          takers: []
+        },
+        throwins: {
+          defensive: null,
+          offensive: null,
+          long: null,
+          strategy: 'short'
+        }
+      }
+    };
+    this.savedTactics = [];
+    this.showGuidelines = false;
+    
+    this.init();
+  }
+  
+  async init() {
+    this.bindEvents();
+    await this.loadData();
+    this.renderComponents();
+  }
+  
+  bindEvents() {
+    // Save tactics button
+    document.querySelector('.save-tactics-btn').addEventListener('click', () => {
+      this.showSaveModal();
+    });
+    
+    // Load tactics button
+    document.querySelector('.load-tactics-btn').addEventListener('click', () => {
+      this.showLoadModal();
+    });
+    
+    // Guidelines toggle button
+    document.querySelector('.guidelines-toggle-btn').addEventListener('click', (e) => {
+      this.toggleGuidelines(e.target);
+    });
+    
+    // Copy formation button
+    document.querySelector('.copy-formation-btn').addEventListener('click', () => {
+      this.copyFormation();
+    });
+    
+    // Mentality preset select
+    document.getElementById('mentalityPreset').addEventListener('change', (e) => {
+      if (e.target.value) {
+        this.applyMentalityPreset(e.target.value);
+      }
+    });
+    
+    // Save confirmation modal
+    document.getElementById('confirmSaveBtn').addEventListener('click', () => {
+      this.saveTactics();
+    });
+    
+    document.getElementById('cancelSaveBtn').addEventListener('click', () => {
+      this.hideSaveModal();
+    });
+    
+    document.querySelector('#saveConfirmModal .modal-close-btn').addEventListener('click', () => {
+      this.hideSaveModal();
+    });
+    
+    // Load tactics modal
+    document.getElementById('cancelLoadBtn').addEventListener('click', () => {
+      this.hideLoadModal();
+    });
+    
+    document.querySelector('#loadTacticsModal .modal-close-btn').addEventListener('click', () => {
+      this.hideLoadModal();
+    });
+    
+    // Listen for formation change
+    document.addEventListener('formationChange', (e) => {
+      this.handleFormationChange(e.detail.formation);
+    });
+    
+    // Listen for player positioning
+    document.addEventListener('playerPositioned', (e) => {
+      this.handlePlayerPositioned(e.detail.playerId, e.detail.position);
+    });
+    
+    // Listen for player movement
+    document.addEventListener('playerMoved', (e) => {
+      this.handlePlayerMoved(e.detail.playerId, e.detail.position);
+    });
+    
+    // Listen for tactics change
+    document.addEventListener('tacticsChange', (e) => {
+      this.handleTacticsChange(e.detail.values);
+    });
+    
+    // Listen for set piece changes
+    document.addEventListener('saveSetPieces', (e) => {
+      this.handleSetPiecesUpdate(e.detail.assignments);
+    });
+  }
+  
+  async loadData() {
+    try {
+      // In a real app, these would be actual API calls to the bolt-core flows
+      const [playersData, savedTacticsData] = await Promise.all([
+        this.fetchPlayers(),
+        this.fetchSavedTactics()
+      ]);
+      
+      this.players = playersData;
+      this.savedTactics = savedTacticsData;
+    } catch (error) {
+      console.error('Error loading data:', error);
+      this.showError('Errore nel caricamento dei dati');
+    }
+  }
+  
+  async fetchPlayers() {
+    // In a real app, this would call a bolt-core flow
+    // For now, we'll return mock data
+    return [
+      {
+        id: 1,
+        name: 'Mario Rossi',
+        age: 25,
+        position: 'FW',
+        overall_rating: 85,
+        fitness: 95,
+        photo: 'https://images.pexels.com/photos/114296/pexels-photo-114296.jpeg?auto=compress&cs=tinysrgb&w=120&h=120'
+      },
+      {
+        id: 2,
+        name: 'Luigi Bianchi',
+        age: 28,
+        position: 'MF',
+        overall_rating: 82,
+        fitness: 88,
+        photo: 'https://images.pexels.com/photos/114296/pexels-photo-114296.jpeg?auto=compress&cs=tinysrgb&w=120&h=120'
+      },
+      {
+        id: 3,
+        name: 'Giuseppe Verdi',
+        age: 30,
+        position: 'DF',
+        overall_rating: 80,
+        fitness: 92,
+        photo: 'https://images.pexels.com/photos/114296/pexels-photo-114296.jpeg?auto=compress&cs=tinysrgb&w=120&h=120'
+      },
+      {
+        id: 4,
+        name: 'Antonio Neri',
+        age: 22,
+        position: 'GK',
+        overall_rating: 78,
+        fitness: 90,
+        photo: 'https://images.pexels.com/photos/114296/pexels-photo-114296.jpeg?auto=compress&cs=tinysrgb&w=120&h=120'
+      },
+      {
+        id: 5,
+        name: 'Franco Blu',
+        age: 24,
+        position: 'MF',
+        overall_rating: 79,
+        fitness: 85,
+        photo: 'https://images.pexels.com/photos/114296/pexels-photo-114296.jpeg?auto=compress&cs=tinysrgb&w=120&h=120'
+      },
+      {
+        id: 6,
+        name: 'Paolo Gialli',
+        age: 26,
+        position: 'DF',
+        overall_rating: 81,
+        fitness: 87,
+        photo: 'https://images.pexels.com/photos/114296/pexels-photo-114296.jpeg?auto=compress&cs=tinysrgb&w=120&h=120'
+      }
+    ];
+  }
+  
+  async fetchSavedTactics() {
+    // In a real app, this would call a bolt-core flow
+    return [
+      {
+        id: 1,
+        name: 'Difesa Solida',
+        description: 'Tattica difensiva con contropiede',
+        formation: '4-4-2',
+        created: '2025-01-15T10:30:00Z'
+      },
+      {
+        id: 2,
+        name: 'Attacco Totale',
+        description: 'Tattica offensiva con pressing alto',
+        formation: '4-3-3',
+        created: '2025-01-10T14:45:00Z'
+      },
+      {
+        id: 3,
+        name: 'Controllo Centrocampo',
+        description: 'Tattica di possesso palla',
+        formation: '4-5-1',
+        created: '2025-01-05T09:15:00Z'
+      }
+    ];
+  }
+  
+  renderComponents() {
+    this.renderFormationSelector();
+    this.renderTacticalField();
+    this.renderMentalitySliders();
+    this.renderSetPieceManager();
+    this.renderTacticalPreview();
+    this.renderSponsorBanner();
+    this.renderSavedTacticsList();
+  }
+  
+  renderFormationSelector() {
+    const container = document.getElementById('formationSelectorContainer');
+    
+    // Create formation selector element
+    const formationSelector = document.createElement('div');
+    formationSelector.className = 'formation-selector';
+    
+    // In a real app, we would use the actual FormationSelector component
+    container.appendChild(formationSelector);
+    
+    // Initialize the component
+    new FormationSelector(formationSelector, {
+      defaultFormation: this.tactics.formation,
+      onChange: (formation) => {
+        this.handleFormationChange(formation);
+      }
+    });
+  }
+  
+  renderTacticalField() {
+    const container = document.getElementById('tacticalFieldContainer');
+    
+    // Create tactical field element
+    const tacticalField = document.createElement('div');
+    tacticalField.className = 'tactical-field';
+    
+    // In a real app, we would use the actual TacticalField component
+    container.appendChild(tacticalField);
+    
+    // Initialize the component
+    new TacticalField(tacticalField, {
+      formation: this.tactics.formation,
+      allowDragDrop: true,
+      showGuidelines: this.showGuidelines,
+      autoValidate: true
+    });
+  }
+  
+  renderMentalitySliders() {
+    const container = document.getElementById('mentalitySlidersContainer');
+    
+    // Create mentality sliders element
+    const mentalitySliders = document.createElement('div');
+    mentalitySliders.className = 'mentality-sliders';
+    
+    // In a real app, we would use the actual MentalitySliders component
+    container.appendChild(mentalitySliders);
+    
+    // Initialize the component
+    new MentalitySliders(mentalitySliders, {
+      autoSave: false,
+      showPreview: true,
+      showAdvice: true
+    });
+  }
+  
+  renderSetPieceManager() {
+    const container = document.getElementById('setPieceManagerContainer');
+    
+    // Create set piece manager element
+    const setPieceManager = document.createElement('div');
+    setPieceManager.className = 'set-piece-manager';
+    
+    // In a real app, we would use the actual SetPieceManager component
+    container.appendChild(setPieceManager);
+    
+    // Initialize the component
+    new SetPieceManager(setPieceManager, {
+      autoSave: false,
+      showStats: true
+    });
+  }
+  
+  renderTacticalPreview() {
+    const container = document.getElementById('tacticalPreviewContainer');
+    
+    // Create tactical preview element
+    const tacticalPreview = document.createElement('div');
+    tacticalPreview.className = 'tactical-preview';
+    
+    // In a real app, we would use the actual TacticalPreview component
+    container.appendChild(tacticalPreview);
+    
+    // Initialize the component
+    new TacticalPreview(tacticalPreview, {
+      autoUpdate: true,
+      showAnalysis: true,
+      showMatchups: true
+    });
+  }
+  
+  renderSponsorBanner() {
+    const container = document.getElementById('sponsorBannerContainer');
+    
+    // Create sponsor banner element
+    const sponsorBanner = document.createElement('div');
+    sponsorBanner.className = 'sponsor-banner';
+    
+    // In a real app, we would use the actual SponsorBanner component
+    container.appendChild(sponsorBanner);
+    
+    // Initialize the component with sample sponsor data
+    const sponsorData = {
+      id: 3,
+      name: 'Football Legends',
+      description: 'Il nuovo videogioco di calcio che sta conquistando il mondo',
+      logo: 'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=200&h=200',
+      cta: 'Preordina',
+      url: 'https://example.com/sponsor3',
+      theme: 'special'
+    };
+    
+    new SponsorBanner(sponsorBanner, {
+      sponsorData,
+      autoClose: true,
+      duration: 10000
+    });
+  }
+  
+  renderSavedTacticsList() {
+    const container = document.getElementById('savedTacticsList');
+    container.innerHTML = '';
+    
+    if (this.savedTactics.length === 0) {
+      const emptyState = document.createElement('div');
+      emptyState.className = 'empty-state';
+      emptyState.innerHTML = `
+        <div class="empty-icon">📋</div>
+        <h4>Nessuna tattica salvata</h4>
+        <p>Salva la tua prima tattica per vederla qui</p>
+      `;
+      container.appendChild(emptyState);
+      return;
+    }
+    
+    // Create tactic items
+    this.savedTactics.forEach(tactic => {
+      const tacticItem = document.createElement('div');
+      tacticItem.className = 'tactic-item';
+      tacticItem.dataset.tacticId = tactic.id;
+      
+      const date = new Date(tactic.created);
+      const formattedDate = date.toLocaleDateString('it-IT', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      
+      tacticItem.innerHTML = `
+        <div class="tactic-info">
+          <h4 class="tactic-name">${tactic.name}</h4>
+          <div class="tactic-meta">
+            <span class="tactic-formation">${tactic.formation}</span>
+            <span class="tactic-date">${formattedDate}</span>
+          </div>
+          <p class="tactic-description">${tactic.description}</p>
+        </div>
+        <div class="tactic-actions">
+          <button class="button button-primary load-tactic-btn">Carica</button>
+        </div>
+      `;
+      
+      // Add event listener to load button
+      tacticItem.querySelector('.load-tactic-btn').addEventListener('click', () => {
+        this.loadTactic(tactic.id);
+      });
+      
+      container.appendChild(tacticItem);
+    });
+  }
+  
+  handleFormationChange(formation) {
+    this.tactics.formation = formation;
+    
+    // Update tactical field
+    const tacticalField = document.querySelector('.tactical-field');
+    if (tacticalField && tacticalField.setFormation) {
+      tacticalField.setFormation(formation);
+    }
+    
+    // Update tactical preview
+    const tacticalPreview = document.querySelector('.tactical-preview');
+    if (tacticalPreview && tacticalPreview.setFormation) {
+      tacticalPreview.setFormation(formation);
+    }
+  }
+  
+  handlePlayerPositioned(playerId, position) {
+    this.tactics.positions[playerId] = position;
+    
+    // Update tactical preview
+    const tacticalPreview = document.querySelector('.tactical-preview');
+    if (tacticalPreview && tacticalPreview.updateTacticalData) {
+      tacticalPreview.updateTacticalData({
+        formation: this.tactics.formation,
+        positions: this.tactics.positions
+      });
+    }
+  }
+  
+  handlePlayerMoved(playerId, position) {
+    this.tactics.positions[playerId] = position;
+    
+    // Update tactical preview
+    const tacticalPreview = document.querySelector('.tactical-preview');
+    if (tacticalPreview && tacticalPreview.updateTacticalData) {
+      tacticalPreview.updateTacticalData({
+        formation: this.tactics.formation,
+        positions: this.tactics.positions
+      });
+    }
+  }
+  
+  handleTacticsChange(values) {
+    this.tactics.mentality = values;
+    
+    // Update tactical preview
+    const tacticalPreview = document.querySelector('.tactical-preview');
+    if (tacticalPreview && tacticalPreview.updateTacticalData) {
+      tacticalPreview.updateTacticalData({
+        formation: this.tactics.formation,
+        positions: this.tactics.positions,
+        mentality: this.tactics.mentality
+      });
+    }
+  }
+  
+  handleSetPiecesUpdate(assignments) {
+    this.tactics.setPieces = assignments;
+  }
+  
+  toggleGuidelines(button) {
+    this.showGuidelines = !this.showGuidelines;
+    button.setAttribute('aria-pressed', this.showGuidelines);
+    
+    // Update tactical field
+    const tacticalField = document.querySelector('.tactical-field');
+    if (tacticalField) {
+      if (this.showGuidelines) {
+        tacticalField.showGuidelines();
+      } else {
+        tacticalField.hideGuidelines();
+      }
+    }
+  }
+  
+  copyFormation() {
+    // In a real app, this would copy the formation from the last match
+    this.showSuccess('Formazione copiata dall\'ultima partita');
+    
+    // Update tactical field with new positions
+    const tacticalField = document.querySelector('.tactical-field');
+    if (tacticalField && tacticalField.setPositions) {
+      // Mock positions data
+      const positions = {
+        1: { x: 50, y: 300 },
+        2: { x: 150, y: 150 },
+        3: { x: 150, y: 250 },
+        4: { x: 150, y: 350 },
+        5: { x: 150, y: 450 },
+        6: { x: 300, y: 150 }
+      };
+      
+      tacticalField.setPositions(positions);
+      this.tactics.positions = positions;
+    }
+  }
+  
+  applyMentalityPreset(preset) {
+    // Update mentality sliders
+    const mentalitySliders = document.querySelector('.mentality-sliders');
+    if (mentalitySliders && mentalitySliders.setValues) {
+      const presets = {
+        defensive: {
+          mentality: 20,
+          tempo: 30,
+          width: 40,
+          pressing: 30,
+          creativity: 40,
+          directness: 60
+        },
+        balanced: {
+          mentality: 50,
+          tempo: 50,
+          width: 50,
+          pressing: 50,
+          creativity: 50,
+          directness: 50
+        },
+        attacking: {
+          mentality: 80,
+          tempo: 70,
+          width: 70,
+          pressing: 70,
+          creativity: 70,
+          directness: 40
+        },
+        counter: {
+          mentality: 30,
+          tempo: 80,
+          width: 60,
+          pressing: 40,
+          creativity: 60,
+          directness: 70
+        }
+      };
+      
+      mentalitySliders.setValues(presets[preset]);
+      this.tactics.mentality = presets[preset];
+    }
+  }
+  
+  showSaveModal() {
+    document.getElementById('saveConfirmModal').style.display = 'flex';
+    document.getElementById('tacticName').focus();
+  }
+  
+  hideSaveModal() {
+    document.getElementById('saveConfirmModal').style.display = 'none';
+  }
+  
+  showLoadModal() {
+    document.getElementById('loadTacticsModal').style.display = 'flex';
+  }
+  
+  hideLoadModal() {
+    document.getElementById('loadTacticsModal').style.display = 'none';
+  }
+  
+  saveTactics() {
+    const name = document.getElementById('tacticName').value.trim();
+    const description = document.getElementById('tacticDescription').value.trim();
+    
+    if (!name) {
+      this.showError('Inserisci un nome per la tattica');
+      return;
+    }
+    
+    // In a real app, this would call the Tactics_Update flow
+    console.log('Saving tactics:', {
+      name,
+      description,
+      ...this.tactics
+    });
+    
+    // Show success message
+    this.showSuccess('Tattica salvata con successo');
+    
+    // Hide modal
+    this.hideSaveModal();
+    
+    // Add to saved tactics
+    this.savedTactics.push({
+      id: Date.now(),
+      name,
+      description,
+      formation: this.tactics.formation,
+      created: new Date().toISOString()
+    });
+    
+    // Update saved tactics list
+    this.renderSavedTacticsList();
+  }
+  
+  loadTactic(tacticId) {
+    // In a real app, this would call a bolt-core flow to load the tactic
+    console.log(`Loading tactic ${tacticId}`);
+    
+    // Find tactic
+    const tactic = this.savedTactics.find(t => t.id === tacticId);
+    if (!tactic) return;
+    
+    // Update formation
+    this.handleFormationChange(tactic.formation);
+    
+    // Apply a random mentality preset for demo purposes
+    const presets = ['defensive', 'balanced', 'attacking', 'counter'];
+    const randomPreset = presets[Math.floor(Math.random() * presets.length)];
+    this.applyMentalityPreset(randomPreset);
+    
+    // Show success message
+    this.showSuccess(`Tattica "${tactic.name}" caricata con successo`);
+    
+    // Hide modal
+    this.hideLoadModal();
+  }
+  
+  showSuccess(message) {
+    // In a real app, this would use a toast component
+    window.dispatchEvent(new CustomEvent('showToast', {
+      detail: { message, type: 'success' }
+    }));
+  }
+  
+  showError(message) {
+    // In a real app, this would use a toast component
+    window.dispatchEvent(new CustomEvent('showToast', {
+      detail: { message, type: 'error' }
+    }));
+  }
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', () => {
+  new TacticalSetupPage();
+});
+</script>
