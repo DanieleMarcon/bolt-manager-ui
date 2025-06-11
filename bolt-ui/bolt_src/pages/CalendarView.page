@@ -2,512 +2,285 @@
   <div class="page-header">
     <h2 class="page-title">Calendario</h2>
     <div class="page-actions">
-      <button id="addEventBtn" class="button button-secondary">
-        <span class="button-icon">➕</span>
-        <span class="button-text">Aggiungi Evento</span>
+      <button class="button button-secondary add-event-btn">
+        📅 Aggiungi Evento
       </button>
-      <button id="printCalendarBtn" class="button button-ghost">
-        <span class="button-icon">🖨️</span>
-        <span class="button-text">Stampa</span>
+      <button class="button button-primary advance-day-btn">
+        ⏩ Avanza Giorno
       </button>
     </div>
   </div>
 
-  <div class="calendar-container">
-    <div class="calendar-navigation-container">
-      <!-- Calendar Navigation Component -->
-      <div class="calendar-navigation"></div>
-    </div>
-
-    <div class="calendar-main-content">
-      <div class="calendar-grid-container">
-        <!-- Calendar Grid Component -->
-        <div class="calendar-grid"></div>
-      </div>
-      
-      <div class="calendar-sidebar">
-        <div class="upcoming-events-container">
-          <!-- Upcoming Events List Component -->
-          <div class="upcoming-events-list"></div>
-        </div>
-        
-        <div class="advance-day-container">
-          <!-- Advance Day Button Component -->
-          <div class="advance-day-button"></div>
-        </div>
-      </div>
-    </div>
+  <!-- Calendar Navigation Section -->
+  <div class="calendar-navigation-section">
+    <div id="calendarNavigationContainer"></div>
   </div>
 
-  <!-- Day Detail Modal will be added to the DOM when needed -->
-  <div class="day-detail-modal-container"></div>
+  <!-- Calendar Grid Section -->
+  <div class="calendar-grid-section">
+    <div id="calendarGridContainer"></div>
+  </div>
+
+  <!-- Upcoming Events Section -->
+  <div class="upcoming-events-section">
+    <div class="section-header">
+      <h3>Eventi Imminenti</h3>
+      <div class="time-range-container" id="timeRangeContainer"></div>
+    </div>
+    <div id="upcomingEventsContainer"></div>
+  </div>
+
+  <!-- Day Detail Modal -->
+  <div id="dayDetailModalContainer"></div>
 
   <!-- Sponsor Banner -->
-  <div class="sponsor-banner-container">
-    <div class="sponsor-banner"></div>
-  </div>
+  <div id="sponsorBannerContainer" class="sponsor-banner-container"></div>
 </div>
 
-<style>
-  .calendar-view-page {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-
-  .page-title {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0;
-  }
-
-  .page-actions {
-    display: flex;
-    gap: 12px;
-  }
-
-  .calendar-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .calendar-main-content {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 24px;
-  }
-
-  .calendar-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .sponsor-banner-container {
-    margin-top: 24px;
-  }
-
-  /* Responsive styles */
-  @media (max-width: 1024px) {
-    .calendar-main-content {
-      grid-template-columns: 1fr;
-    }
-
-    .calendar-sidebar {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .page-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-    }
-
-    .page-actions {
-      width: 100%;
-      justify-content: space-between;
-    }
-
-    .calendar-sidebar {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
-
 <script>
-  class CalendarViewPage {
-    constructor() {
-      this.currentDate = new Date();
-      this.events = [];
-      this.dayDetailModal = null;
-      this.components = {};
-      
-      this.init();
+class CalendarViewPage {
+  constructor() {
+    this.events = [];
+    this.currentDate = new Date();
+    this.selectedDate = null;
+    this.currentView = 'month';
+    this.init();
+  }
+
+  async init() {
+    this.bindEvents();
+    await this.loadData();
+    this.renderComponents();
+  }
+
+  bindEvents() {
+    document.querySelector('.add-event-btn')?.addEventListener('click', () => this.showAddEventModal());
+    document.querySelector('.advance-day-btn')?.addEventListener('click', () => this.advanceDay());
+
+    document.addEventListener('dateChange', (e) => this.handleDateChange(e.detail.date));
+    document.addEventListener('viewChange', (e) => this.handleViewChange(e.detail.view));
+    document.addEventListener('dayClick', (e) => this.handleDayClick(e.detail.date, e.detail.events));
+    document.addEventListener('advanceDay', () => this.advanceDay());
+    document.addEventListener('advanceToDay', (e) => this.advanceToDay(e.detail.date));
+    document.addEventListener('saveDay', (e) => this.saveDay(e.detail));
+    document.addEventListener('rangeChange', (e) => this.handleRangeChange(e.detail));
+  }
+
+  async loadData() {
+    try {
+      this.events = await this.fetchEvents();
+    } catch (error) {
+      console.error('Errore nel caricamento dei dati:', error);
+      alert('Errore nel caricamento degli eventi');
+    }
+  }
+
+  async fetchEvents() {
+    const today = new Date();
+    const events = [];
+
+    for (let i = -10; i < 30; i++) {
+      const eventDate = new Date(today);
+      eventDate.setDate(today.getDate() + i);
+      if (Math.random() > 0.3) continue;
+
+      const types = ['match', 'training', 'rest', 'transfer'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const rivals = ['Juventus', 'Inter', 'Roma', 'Napoli', 'Lazio'];
+      const title = type === 'match' ? `Partita vs ${rivals[Math.floor(Math.random() * 5)]}` :
+                    type === 'training' ? `Allenamento ${['Tattico', 'Fisico', 'Tecnico'][Math.floor(Math.random() * 3)]}` :
+                    type === 'rest' ? 'Giorno di Riposo' : 'Scadenza Mercato';
+
+      events.push({
+        id: i + 100,
+        title,
+        date: eventDate.toISOString(),
+        time: type === 'match' ? '15:00' : type === 'training' ? '10:00' : '',
+        location: type === 'match' ? 'Stadio San Siro' : type === 'training' ? 'Centro Sportivo' : '',
+        type,
+        description: `Descrizione dettagliata per ${title}`
+      });
     }
 
-    async init() {
-      this.initComponents();
-      this.bindEvents();
-      await this.loadEvents();
-      this.renderCalendar();
-    }
+    return events;
+  }
 
-    initComponents() {
-      // Initialize CalendarNavigation component
-      const calendarNavEl = document.querySelector('.calendar-navigation');
-      this.components.calendarNavigation = new CalendarNavigation(calendarNavEl, {
+  renderComponents() {
+    this.renderCalendarNavigation();
+    this.renderCalendarGrid();
+    this.renderTimeRange();
+    this.renderUpcomingEvents();
+    this.renderDayDetailModal();
+    this.renderSponsorBanner();
+  }
+
+  renderCalendarNavigation() {
+    const container = document.getElementById('calendarNavigationContainer');
+    const el = document.createElement('div');
+    el.className = 'calendar-navigation';
+    container.appendChild(el);
+
+    if (typeof CalendarNavigation !== "undefined") {
+      new CalendarNavigation(el, {
         onDateChange: (date) => this.handleDateChange(date),
         onViewChange: (view) => this.handleViewChange(view),
-        onAdvanceDay: () => this.handleAdvanceDay()
+        onAdvanceDay: () => this.advanceDay()
       });
-
-      // Initialize CalendarGrid component
-      const calendarGridEl = document.querySelector('.calendar-grid');
-      this.components.calendarGrid = new CalendarGrid(calendarGridEl, {
-        onDayClick: (date, events) => this.handleDayClick(date, events)
-      });
-
-      // Initialize UpcomingEventsList component
-      const upcomingEventsEl = document.querySelector('.upcoming-events-list');
-      this.components.upcomingEventsList = new UpcomingEventsList(upcomingEventsEl, {
-        onEventClick: (event) => this.handleEventClick(event)
-      });
-
-      // Initialize AdvanceDayButton component
-      const advanceDayEl = document.querySelector('.advance-day-button');
-      this.components.advanceDayButton = new AdvanceDayButton(advanceDayEl, {
-        onAdvance: () => this.handleAdvanceDay()
-      });
-
-      // Initialize SponsorBanner component
-      const sponsorBannerEl = document.querySelector('.sponsor-banner');
-      this.components.sponsorBanner = new SponsorBanner(sponsorBannerEl, {
-        autoClose: true,
-        duration: 10000
-      });
-
-      // Create DayDetailModal (will be initialized when needed)
-      const modalContainer = document.querySelector('.day-detail-modal-container');
-      modalContainer.innerHTML = '<div class="day-detail-modal"></div>';
-      this.dayDetailModal = new DayDetailModal(modalContainer.querySelector('.day-detail-modal'), {
-        onSave: (dayData) => this.handleSaveDayDetails(dayData),
-        onAdvance: (date) => this.handleAdvanceToDay(date)
-      });
-    }
-
-    bindEvents() {
-      // Add Event button
-      document.getElementById('addEventBtn').addEventListener('click', () => {
-        this.showAddEventDialog();
-      });
-
-      // Print Calendar button
-      document.getElementById('printCalendarBtn').addEventListener('click', () => {
-        this.printCalendar();
-      });
-
-      // Listen for day click events from CalendarGrid
-      document.addEventListener('dayClick', (e) => {
-        this.handleDayClick(e.detail.date, e.detail.events);
-      });
-
-      // Listen for event click events from UpcomingEventsList
-      document.addEventListener('eventClick', (e) => {
-        this.handleEventClick(e.detail.event);
-      });
-
-      // Listen for date change events from CalendarNavigation
-      document.addEventListener('dateChange', (e) => {
-        this.handleDateChange(e.detail.date);
-      });
-
-      // Listen for advance day events
-      document.addEventListener('advanceDay', () => {
-        this.handleAdvanceDay();
-      });
-
-      // Listen for advance to specific day events
-      document.addEventListener('advanceToDay', (e) => {
-        this.handleAdvanceToDay(e.detail.date);
-      });
-
-      // Listen for save day details events
-      document.addEventListener('saveDay', (e) => {
-        this.handleSaveDayDetails(e.detail);
-      });
-    }
-
-    async loadEvents() {
-      try {
-        // In a real app, this would call the Calendar_FetchUpcomingEvents flow
-        // For now, we'll use mock data
-        this.events = await this.fetchEvents();
-        
-        // Update components with events
-        this.components.calendarGrid.setEvents(this.events);
-        this.components.upcomingEventsList.setEvents(this.events);
-        
-        // Update events count
-        this.components.upcomingEventsList.setEventsCount(this.events.length);
-      } catch (error) {
-        console.error('Error loading events:', error);
-        this.showError('Errore nel caricamento degli eventi');
-      }
-    }
-
-    async fetchEvents() {
-      // Mock data - in a real app this would call the Calendar_FetchUpcomingEvents flow
-      const today = new Date();
-      const events = [];
-      
-      // Generate some sample events
-      for (let i = -5; i < 30; i++) {
-        const eventDate = new Date(today);
-        eventDate.setDate(today.getDate() + i);
-        
-        // Add a match every 7 days
-        if (i % 7 === 0) {
-          events.push({
-            id: `match-${i}`,
-            title: `Partita vs ${['Juventus', 'Inter', 'Roma', 'Napoli', 'Lazio'][Math.floor(Math.random() * 5)]}`,
-            date: eventDate.toISOString(),
-            time: '15:00',
-            type: 'match',
-            description: 'Partita di campionato'
-          });
-        }
-        
-        // Add training sessions 3 times a week
-        if (i % 2 === 0 && i % 7 !== 0) {
-          events.push({
-            id: `training-${i}`,
-            title: `Allenamento ${['Tattico', 'Fisico', 'Tecnico'][Math.floor(Math.random() * 3)]}`,
-            date: eventDate.toISOString(),
-            time: '10:00',
-            type: 'training',
-            description: 'Sessione di allenamento'
-          });
-        }
-        
-        // Add some random events
-        if (i % 11 === 0) {
-          events.push({
-            id: `event-${i}`,
-            title: 'Conferenza Stampa',
-            date: eventDate.toISOString(),
-            time: '14:00',
-            type: 'other',
-            description: 'Conferenza stampa pre-partita'
-          });
-        }
-      }
-      
-      return events;
-    }
-
-    renderCalendar() {
-      // Update calendar with current date
-      this.components.calendarNavigation.setCurrentDate(this.currentDate);
-      
-      // Update calendar grid with events
-      this.components.calendarGrid.setEvents(this.events);
-    }
-
-    handleDateChange(date) {
-      this.currentDate = date;
-      this.renderCalendar();
-    }
-
-    handleViewChange(view) {
-      // Update calendar view (month, week, day)
-      console.log(`View changed to: ${view}`);
-      // In a real app, this would update the calendar display
-    }
-
-    handleDayClick(date, events) {
-      // Show day detail modal
-      this.dayDetailModal.show(date, events);
-    }
-
-    handleEventClick(event) {
-      // Handle event click based on type
-      switch (event.type) {
-        case 'match':
-          this.navigateToMatch(event);
-          break;
-        case 'training':
-          this.navigateToTraining(event);
-          break;
-        default:
-          // Show event details
-          this.showEventDetails(event);
-      }
-    }
-
-    async handleAdvanceDay() {
-      try {
-        // In a real app, this would call the GameFlow_AdvanceDay flow
-        // For now, we'll just simulate advancing the day
-        const result = await this.simulateAdvanceDay();
-        
-        if (result.success) {
-          // Update current date
-          this.currentDate = new Date(result.newDate);
-          
-          // Update calendar
-          this.components.calendarNavigation.setCurrentDate(this.currentDate);
-          
-          // Reload events
-          await this.loadEvents();
-          
-          // Show success message
-          this.showSuccess('Giorno avanzato con successo');
-        }
-      } catch (error) {
-        console.error('Error advancing day:', error);
-        this.showError('Errore nell\'avanzamento del giorno');
-      }
-    }
-
-    async simulateAdvanceDay() {
-      // Simulate the GameFlow_AdvanceDay flow
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const newDate = new Date(this.currentDate);
-          newDate.setDate(newDate.getDate() + 1);
-          
-          resolve({
-            success: true,
-            newDate: newDate.toISOString(),
-            events: []
-          });
-        }, 1000);
-      });
-    }
-
-    async handleAdvanceToDay(date) {
-      try {
-        // In a real app, this would call a flow to advance to a specific day
-        // For now, we'll just simulate it
-        const result = await this.simulateAdvanceToDay(date);
-        
-        if (result.success) {
-          // Update current date
-          this.currentDate = new Date(result.newDate);
-          
-          // Update calendar
-          this.components.calendarNavigation.setCurrentDate(this.currentDate);
-          
-          // Reload events
-          await this.loadEvents();
-          
-          // Show success message
-          this.showSuccess('Avanzato alla data selezionata');
-        }
-      } catch (error) {
-        console.error('Error advancing to day:', error);
-        this.showError('Errore nell\'avanzamento alla data selezionata');
-      }
-    }
-
-    async simulateAdvanceToDay(date) {
-      // Simulate advancing to a specific day
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            success: true,
-            newDate: date.toISOString(),
-            events: []
-          });
-        }, 1000);
-      });
-    }
-
-    handleSaveDayDetails(dayData) {
-      // In a real app, this would save the day details to the game state
-      console.log('Saving day details:', dayData);
-      
-      // Update events if needed
-      if (dayData.events) {
-        // Find and update existing events for this day
-        const dayDateStr = dayData.date.toISOString().split('T')[0];
-        
-        // Remove existing events for this day
-        this.events = this.events.filter(event => {
-          const eventDateStr = new Date(event.date).toISOString().split('T')[0];
-          return eventDateStr !== dayDateStr;
-        });
-        
-        // Add new events
-        this.events = [...this.events, ...dayData.events];
-        
-        // Update calendar and events list
-        this.components.calendarGrid.setEvents(this.events);
-        this.components.upcomingEventsList.setEvents(this.events);
-      }
-      
-      this.showSuccess('Dettagli giorno salvati');
-    }
-
-    showAddEventDialog() {
-      // In a real app, this would show a modal to add a new event
-      const eventType = prompt('Tipo evento (match, training, other):');
-      if (!eventType) return;
-      
-      const eventTitle = prompt('Titolo evento:');
-      if (!eventTitle) return;
-      
-      const eventDate = prompt('Data evento (YYYY-MM-DD):');
-      if (!eventDate) return;
-      
-      // Create new event
-      const newEvent = {
-        id: `event-${Date.now()}`,
-        title: eventTitle,
-        date: new Date(eventDate).toISOString(),
-        time: '10:00',
-        type: eventType,
-        description: 'Evento aggiunto manualmente'
-      };
-      
-      // Add to events
-      this.events.push(newEvent);
-      
-      // Update calendar and events list
-      this.components.calendarGrid.setEvents(this.events);
-      this.components.upcomingEventsList.setEvents(this.events);
-      
-      this.showSuccess('Evento aggiunto con successo');
-    }
-
-    printCalendar() {
-      // In a real app, this would generate a printable version of the calendar
-      window.print();
-    }
-
-    navigateToMatch(event) {
-      // In a real app, this would navigate to the match page
-      console.log('Navigating to match:', event);
-      this.showSuccess(`Navigazione alla partita: ${event.title}`);
-    }
-
-    navigateToTraining(event) {
-      // In a real app, this would navigate to the training page
-      console.log('Navigating to training:', event);
-      this.showSuccess(`Navigazione all'allenamento: ${event.title}`);
-    }
-
-    showEventDetails(event) {
-      // In a real app, this would show a modal with event details
-      alert(`Dettagli evento: ${event.title}\nData: ${new Date(event.date).toLocaleDateString()}\nOra: ${event.time}\nTipo: ${event.type}\nDescrizione: ${event.description}`);
-    }
-
-    showSuccess(message) {
-      window.dispatchEvent(new CustomEvent('showToast', {
-        detail: { message, type: 'success' }
-      }));
-    }
-
-    showError(message) {
-      window.dispatchEvent(new CustomEvent('showToast', {
-        detail: { message, type: 'error' }
-      }));
     }
   }
 
-  // Initialize the page when the DOM is loaded
-  document.addEventListener('DOMContentLoaded', () => {
-    new CalendarViewPage();
-  });
+  renderCalendarGrid() {
+    const container = document.getElementById('calendarGridContainer');
+    const el = document.createElement('div');
+    el.className = 'calendar-grid';
+    container.appendChild(el);
+
+    if (typeof CalendarGrid !== "undefined") {
+      const grid = new CalendarGrid(el, {
+        onDayClick: (date, events) => this.handleDayClick(date, events)
+      });
+      if (grid.setEvents) grid.setEvents(this.events);
+    }
+  }
+
+  renderTimeRange() {
+    const container = document.getElementById('timeRangeContainer');
+    const el = document.createElement('div');
+    el.className = 'time-range-filter';
+    container.appendChild(el);
+
+    if (typeof TimeRangeFilter !== "undefined") {
+      new TimeRangeFilter(el, {
+        onChange: (range, startDate, endDate) => this.handleRangeChange({ range, startDate, endDate }),
+        defaultRange: 'month'
+      });
+    }
+  }
+
+  renderUpcomingEvents() {
+    const container = document.getElementById('upcomingEventsContainer');
+    const el = document.createElement('div');
+    el.className = 'upcoming-events-list';
+    container.appendChild(el);
+
+    if (typeof UpcomingEventsList !== "undefined") {
+      const list = new UpcomingEventsList(el, {
+        daysAhead: 30,
+        maxEvents: 10,
+        onEventClick: (event) => this.handleEventClick(event)
+      });
+      if (list.setEvents) list.setEvents(this.events);
+    }
+  }
+
+  renderDayDetailModal() {
+    const container = document.getElementById('dayDetailModalContainer');
+    const el = document.createElement('div');
+    el.className = 'day-detail-modal modal';
+    container.appendChild(el);
+
+    if (typeof DayDetailModal !== "undefined") {
+      this.dayDetailModal = new DayDetailModal(el, {
+        onSave: (data) => this.saveDay(data),
+        onAdvance: (date) => this.advanceToDay(date)
+      });
+    }
+  }
+
+  renderSponsorBanner() {
+    const container = document.getElementById('sponsorBannerContainer');
+    const el = document.createElement('div');
+    el.className = 'sponsor-banner';
+    container.appendChild(el);
+
+    const sponsorData = {
+      id: 2,
+      name: 'Energy Boost',
+      description: 'La bevanda energetica ufficiale dei campioni di calcio',
+      logo: 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=200&h=200',
+      cta: 'Prova ora',
+      url: 'https://example.com/sponsor2',
+      theme: 'featured'
+    };
+
+    if (typeof SponsorBanner !== "undefined") {
+      new SponsorBanner(el, { sponsorData, autoClose: true, duration: 10000 });
+    }
+  }
+
+  handleDateChange(date) {
+    this.currentDate = date;
+    const grid = document.querySelector('.calendar-grid');
+    if (grid?.setCurrentMonth) grid.setCurrentMonth(date);
+  }
+
+  handleViewChange(view) {
+    this.currentView = view;
+  }
+
+  handleDayClick(date, events) {
+    this.selectedDate = date;
+    if (this.dayDetailModal?.show) {
+      this.dayDetailModal.show(date, events);
+    } else {
+      window?.showDayDetail?.(date, events);
+    }
+  }
+
+  handleEventClick(event) {
+    const eventDate = new Date(event.date);
+    const dayEvents = this.events.filter(e => new Date(e.date).toDateString() === eventDate.toDateString());
+    this.handleDayClick(eventDate, dayEvents);
+  }
+
+  handleRangeChange({ range, startDate, endDate }) {
+    const filtered = this.events.filter(e => {
+      const date = new Date(e.date);
+      return date >= startDate && date <= endDate;
+    });
+
+    const list = document.querySelector('.upcoming-events-list');
+    if (list?.setEvents) list.setEvents(filtered);
+    if (list?.setEventsCount) list.setEventsCount(filtered.length);
+  }
+
+  advanceDay() {
+    alert("Funzione 'Avanza Giorno' eseguita");
+  }
+
+  advanceToDay(date) {
+    alert(`Avanzamento fino al ${new Date(date).toLocaleDateString()}`);
+  }
+
+  saveDay(data) {
+    console.log("Dati giorno salvati:", data);
+  }
+
+  showAddEventModal() {
+    const date = prompt('Data evento (YYYY-MM-DD):');
+    if (!date) return;
+    const type = prompt('Tipo evento (match, training, rest, transfer):');
+    if (!type) return;
+    const title = prompt('Titolo evento:');
+    if (!title) return;
+
+    const newEvent = {
+      id: Date.now(),
+      title,
+      date: new Date(date).toISOString(),
+      time: '10:00',
+      location: '',
+      type,
+      description: `Descrizione per ${title}`
+    };
+
+    this.events.push(newEvent);
+    const grid = document.querySelector('.calendar-grid');
+    if (grid?.setEvents) grid.setEvents(this.events);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  new CalendarViewPage();
+});
 </script>
