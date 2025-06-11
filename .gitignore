@@ -1,0 +1,25 @@
+# 📦 Dipendenze
+node_modules/
+package-lock.json
+
+# 💅 Output statico
+dist/
+!.gitkeep
+
+# ⚙️ Ambienti e config
+.env
+.env.local
+*.log
+*.tmp
+
+# 🍏 macOS
+.DS_Store
+
+# 🧪 File temporanei
+*.bak
+*.swp
+*.old
+
+# 🚫 Cache locali editor
+.vscode/
+.idea/
