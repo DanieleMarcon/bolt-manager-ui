@@ -1,85 +1,127 @@
-# 🎨 Bolt Manager 01/02 – UI
+# ⚽ Bolt Manager 01/02 – Demo
 
-Interfaccia utente moderna e accessibile per il gioco manageriale calcistico Bolt Manager 01/02, costruita interamente in Bolt.new con approccio responsive e mobile-first.
+Web app manageriale calcistica realizzata interamente con **Bolt.new**, pensata per offrire un'esperienza moderna, scalabile e totalmente no-code.
 
 ---
 
 ## 🚀 Obiettivo
 
-Progettare e realizzare la UI/UX del manageriale calcistico, ispirata alla profondità funzionale di Championship Manager 01/02 ma con un design moderno e completamente responsive.
+Ricreare in Bolt.new le logiche fondamentali di un gioco manageriale old school, mantenendo la profondità simulativa e adottando una UI moderna e giovane adatta al web del 2025.
 
 ---
 
 ## 📐 Architettura
 
-- 📄 **Bolt Pages**: Sezioni principali dell’app (rosa, partite, tattiche…)
-- 🧩 **Bolt Components**: Elementi UI riutilizzabili (PlayerCard, MatchCard…)
-- 🎨 **CSS nativo**: Design system centralizzato e responsive
+Costruita interamente con tecnologie native Bolt:
+
+- 🔧 **Bolt Flows** per logiche di gioco (simulazioni, avanzamenti, azioni)
+- 📄 **Bolt Pages** per ogni sezione gestionale (rosa, match, mercato…)
+- 📊 **Bolt Datasets** per modellazione dati persistenti (team, player, match…)
+- 🧩 **Bolt Components** per UI riutilizzabile
+- 💾 **Bolt Storage** per salvataggi utente (sessione e permanenti)
 
 ### 📁 Struttura progetto
 
 bolt_src/
-├── pages/ → Pagine utente del gioco
-├── components/ → Componenti UI personalizzati
-├── ui/ → Documentazione UI + style guide CSS
+├── flows/ → Logica di gioco (match engine, training…)
+├── pages/ → Interfacce per ogni sezione del gioco
+├── datasets/ → Modelli dati persistenti (team, player…)
+├── components/ → Componenti UI (PlayerCard, MatchStats…)
+├── storage/ → Variabili e salvataggi Bolt
 
-📄 Documentazione
-├── ui_overview.md – Overview UX/UI completa e linee guida
-├── style.css – CSS globale nativo (mobile-first, accessibile)
+dist/
+├── index.html → Interfaccia principale
+├── main.js → Logica routing e eventi utente
+├── style.css → Design System globale
+├── assets/ → Icone, loghi, immagini statiche
 
----
+deploy/
+├── README_DEPLOY.md → Istruzioni deploy (es. SiteGround)
+├── deploy.sh → Automazione futura (es. CI/CD)
 
-## 🎨 Caratteristiche UI/UX
-
-- ✅ **Mobile-First**: Interfaccia ottimizzata per smartphone e tablet
-- ✅ **Smart TV Ready**: Navigazione a 4 direzioni, testo grande, overscan
-- ✅ **Accessibilità Avanzata**: Supporto tastiera, screen reader, focus visibili
-- ✅ **Design System Personalizzato**:
-  - Palette moderna a 5 colori
-  - Spacing System basato su unità 4px
-  - Typography system fluido
-  - 50+ componenti documentati
-- ✅ **Performance-First**: CSS nativo, no framework, zero dipendenze
+yaml
+Copia
+Modifica
 
 ---
 
-## 🧭 Navigazione Globale
+## 🧱 Moduli principali
 
-Struttura delle sezioni principali (sidebar/navigation):
+- **Gestione Squadra**: rosa, ruoli, filtri, stato e morale
+- **Allenamento**: routine settimanali, crescita, stanchezza
+- **Tattiche**: moduli, mentalità, marcature, ruoli
+- **Partite**: engine testuale, eventi, sostituzioni, report
+- **Mercato**: offerte, contratti, clausole, scouting
+- **Scouting**: mascheramento, precisione, shortlist, report
+- **Direzione**: finanze, sponsor, obiettivi board
+- **Notizie**: comunicati dinamici, eventi, notifiche
+- **Storico**: andamento attributi, prestazioni, timeline
+- **Sistema**: salvataggi, impostazioni utente
 
-- Squadra
-- Allenamento
-- Tattiche
-- Partite
-- Mercato
-- Calendario
-- Salvataggi
-- Storico
-- Impostazioni
+---
+
+## 🎨 UX/UI
+
+- Design system personalizzato e documentato
+- CSS nativo (`dist/style.css`) con componenti globali
+- Responsive 100% (mobile, tablet, desktop, Smart TV)
+- Accessibilità completa (focus, tastiera, ARIA, contrasto)
+- 50+ componenti UI riutilizzabili
+- Documentazione in `bolt_src/ui/ui_overview.md`
 
 ---
 
 ## 🔄 Flusso di lavoro
 
-1. Creazione Pages e Components in Bolt.new
-2. Collegamento dinamico ai flow definiti nel progetto `bolt-core`
-3. Test interattivo delle pagine nella preview Bolt
-4. Export HTML/CSS → `dist/`
-5. Deploy finale su hosting (es. SiteGround)
+1. Sviluppo in Bolt.new (Flows, Datasets, Pages, Components)
+2. Esportazione in `/dist` (HTML + JS + CSS)
+3. Deploy manuale (es. FTP su SiteGround) o CI/CD GitHub
+4. Aggiornamento documentazione in `*.md`
+5. Versionamento via Git
 
 ---
 
-## 📄 Documentazione
+## ☁️ Hosting consigliato
 
-- `ui_overview.md`: Guida completa al design system e pattern di interfaccia
-- `style.css`: Foglio di stile responsivo mobile-first
-- `components/`: Libreria di componenti UI riutilizzabili
-- `pages/`: Pagine principali del gioco collegate ai flow
+- 🔹 **SiteGround**: upload diretto in `public_html/`
+- 🔹 **GitHub Pages**: hosting gratuito per versioni statiche
+- 🔹 **Netlify**: deploy CI/CD con anteprime automatiche
+
+✅ Il contenuto della cartella `dist/` è completo e autonomo.
 
 ---
 
-## ⚙️ Requisiti
+## 📄 Documentazione tecnica
 
-- ✅ Account Bolt.new
-- ✅ Conoscenza Bolt Pages e Components
-- ✅ Familiarità con CSS e responsive design
+La documentazione completa è suddivisa in sezioni:
+
+- `modules_overview.md` → panoramica moduli principali
+- `datasets_overview.md` → struttura e relazioni dataset
+- `flows_overview.md` → logica di gioco e flussi interni
+- `ui_overview.md` → layout, componenti e accessibilità
+- `roadmap.md` → milestone e obiettivi futuri
+
+---
+
+## 🔧 Requisiti per collaborare
+
+- ✅ Account su [Bolt.new](https://bolt.new)
+- ✅ Familiarità con Bolt Flows, Datasets e Pages
+- ✅ Conoscenza Git + GitHub per versionamento
+- ✅ Editor consigliato: **VS Code**
+
+---
+
+## ✅ Obiettivo finale
+
+Una **demo funzionante e completa** di un manageriale calcistico moderno, progettata per essere:
+
+- Esportabile e deployabile ovunque
+- Modulare e documentata
+- Pronta per diventare un progetto **commerciale**, **educativo** o **open-source**
+
+---
+
+*Aggiornato a: Giugno 2025*  
+*Versione: 1.1*  
+*Compatibilità: Bolt.new latest + tutti i browser moderni*
