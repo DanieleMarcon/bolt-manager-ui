@@ -16,13 +16,20 @@ Aggiornato dinamicamente durante la fase di audit dei file.
 - `StaffList` – Lista completa staff con filtri e ordinamento
 - `CompetencyChart` – Radar chart SVG competenze staff
 
-### ✅ Batch Attuale (Completato)
+### ✅ Batch Match/Calendar (Completato)
 - `LineupSelector` – Selezione formazione con campo interattivo e drag&drop
 - `MatchSummary` – Riepilogo completo partita con statistiche e highlights
 - `StatisticsChart` – Grafici comparativi squadre (possesso, tiri, passaggi)
 - `KeyMoments` – Timeline momenti salienti con autoplay e filtri
 - `DayAdvancer` – Avanzamento temporale con anteprima eventi
 - `UpcomingEvents` – Lista eventi imminenti con filtri e export
+
+### ✅ Batch Transfer/Session (Completato)
+- `PlayerSearch` – Ricerca avanzata giocatori con filtri multipli
+- `NegotiationPanel` – Pannello negoziazione trasferimenti a 3 step
+- `ContractDetails` – Gestione completa dettagli contrattuali
+- `SaveSlotManager` – Gestione slot salvataggio con preview e azioni
+- `SessionList` – Lista sessioni salvate con ordinamento e azioni
 
 ---
 
@@ -34,6 +41,8 @@ Aggiornato dinamicamente durante la fase di audit dei file.
 - `CalendarView.page.js` – Integrati `DayAdvancer`, `UpcomingEvents`
 - `TrainingManagement.page.js` – Integrati `PlayerTrainingCard`, `FitnessChart`
 - `StaffManagement.page.js` – Integrati `StaffCard`, `StaffList`, `CompetencyChart`
+- `TransferMarket.page.js` – Integrati `PlayerSearch`, `NegotiationPanel`, `ContractDetails`
+- `SessionManager.page.js` – Integrati `SaveSlotManager`, `SessionList`
 
 ---
 
@@ -71,13 +80,13 @@ Aggiornato dinamicamente durante la fase di audit dei file.
 
 | Componente           | Azione Necessaria                                            |
 | -------------------- | ------------------------------------------------------------ |
-| `ContractDetails`    | ❌ Creare componente per dettagli contrattuali                |
+| `ContractDetails`    | ✅ **COMPLETATO** - Gestione dettagli contrattuali          |
 | `HistoryTimeline`    | ❌ Creare timeline storico giocatore/squadra                  |
 | `MatchSummary`       | ✅ **COMPLETATO** - Riepilogo completo match              |
-| `NegotiationPanel`   | ❌ Creare pannello avanzato per negoziazione                  |
+| `NegotiationPanel`   | ✅ **COMPLETATO** - Pannello avanzato negoziazione        |
 | `PlayerRatings`      | ❌ Creare tabella valutazioni giocatori                       |
-| `PlayerSearch`       | ❌ Creare barra di ricerca avanzata giocatori                 |
-| `SessionList`        | ❌ Creare elenco sessioni salvate                             |
+| `PlayerSearch`       | ✅ **COMPLETATO** - Ricerca avanzata giocatori            |
+| `SessionList`        | ✅ **COMPLETATO** - Elenco sessioni salvate               |
 | `StatisticsChart`    | ✅ **COMPLETATO** - Grafico avanzato statistiche          |
 | `UpcomingEvents`     | ✅ **COMPLETATO** - Lista eventi imminenti                |
 | `RequestBoardButton` | ❌ Creare bottone interattivo per invio richiesta board       |
@@ -129,7 +138,7 @@ Aggiornato dinamicamente durante la fase di audit dei file.
 
 | File                   | Azione Necessaria                                                               |
 | ---------------------- | ------------------------------------------------------------------------------- |
-| `ui_overview.md`       | ✅ **AGGIORNATO** - Aggiunti tutti i nuovi componenti match/calendario      |
+| `ui_overview.md`       | ✅ **AGGIORNATO** - Aggiunti tutti i nuovi componenti                       |
 | `modules_overview.md`  | Aggiungere: `ContractDetailsPanel`, `TacticalPreview`, `BudgetTracker`          |
 | `datasets_overview.md` | Aggiungere: `finances`, `board_feedback`, `scouting_accuracy`                   |
 | `flows_overview.md`    | Aggiungere: `Finance_Update`, `Board_Evaluate`, `Scouting_Discover` (da creare) |
@@ -160,43 +169,43 @@ Aggiornato dinamicamente durante la fase di audit dei file.
 | `MatchSimulation.page`   | ✅ **COMPLETATO** - Integrato LineupSelector |
 | `MatchAnalysis.page`     | ✅ **COMPLETATO** - Integrati tutti i componenti |
 | `CalendarView.page`      | ✅ **COMPLETATO** - Integrati DayAdvancer e UpcomingEvents |
+| `TransferMarket.page`    | ✅ **COMPLETATO** - Integrati PlayerSearch, NegotiationPanel, ContractDetails |
+| `SessionManager.page`    | ✅ **COMPLETATO** - Integrati SaveSlotManager e SessionList |
 
 ---
 
-## 🎯 STATO ATTUALE - FASE 8B COMPLETATA
+## 🎯 STATO ATTUALE - FASE 8C COMPLETATA
 
 ### ✅ Implementazioni Recenti:
 
-**Componenti Match/Calendar (6 nuovi componenti)**:
-- `LineupSelector`: Selezione formazione interattiva con drag&drop
-- `MatchSummary`: Riepilogo completo partita con export e condivisione
-- `StatisticsChart`: Grafici comparativi avanzati (possesso, tiri, passaggi)
-- `KeyMoments`: Timeline momenti salienti con autoplay e filtri
-- `DayAdvancer`: Avanzamento temporale con anteprima eventi
-- `UpcomingEvents`: Lista eventi imminenti con filtri avanzati
+**Componenti Transfer/Session (5 nuovi componenti)**:
+- `PlayerSearch`: Ricerca avanzata con filtri multipli e quick filters
+- `NegotiationPanel`: Negoziazione a 3 step (offerta, contratto, revisione)
+- `ContractDetails`: Gestione completa dettagli contrattuali con edit mode
+- `SaveSlotManager`: Gestione slot con preview, modali e azioni complete
+- `SessionList`: Lista sessioni con ordinamento, filtri e azioni avanzate
 
-**Pagine Aggiornate (3 pagine)**:
-- `MatchSimulation.page.js`: Simulazione completa con formazione
-- `MatchAnalysis.page.js`: Analisi post-partita completa
-- `CalendarView.page.js`: Calendario avanzato con gestione eventi
+**Pagine Aggiornate (2 pagine)**:
+- `TransferMarket.page.js`: Sistema completo mercato trasferimenti
+- `SessionManager.page.js`: Gestione avanzata salvataggi e sessioni
 
 **Funzionalità Avanzate**:
-- Drag & drop per formazioni
-- Grafici SVG nativi interattivi
-- Timeline con autoplay
-- Avanzamento temporale con preview
-- Export/import dati
-- Filtri avanzati
-- Responsive design completo
+- Ricerca real-time con debouncing
+- Negoziazione step-by-step con validazione
+- Gestione contratti con edit mode e export
+- Sistema slot con preview e duplicazione
+- Lista sessioni con ordinamento e azioni multiple
+- Import/export dati completo
+- Backup e ripristino automatico
 
 ### 🏆 Risultati Raggiunti:
-- **Simulazione Partite**: Sistema completo dalla formazione all'analisi
-- **Gestione Calendario**: Avanzamento temporale e pianificazione eventi
-- **Analisi Avanzate**: Grafici interattivi e momenti salienti
-- **UX Migliorata**: Componenti intuitivi e feedback immediato
-- **Modularità**: Componenti riutilizzabili e ben documentati
+- **Sistema Trasferimenti**: Ricerca, negoziazione e gestione contratti completa
+- **Gestione Sessioni**: Slot salvataggio e lista sessioni con funzionalità avanzate
+- **UX Avanzata**: Modali, conferme, feedback e validazioni complete
+- **Data Management**: Import/export, backup, duplicazione e pulizia
+- **Modularità**: Componenti riutilizzabili e ben strutturati
 
-La **Fase 8B** è completamente implementata! Il sistema di simulazione partite e gestione calendario è ora completo e funzionale.
+La **Fase 8C** è completamente implementata! Il sistema di trasferimenti e gestione sessioni è ora completo e funzionale.
 
 ---
 
@@ -205,3 +214,4 @@ La **Fase 8B** è completamente implementata! Il sistema di simulazione partite 
 - Completare documentazione componenti mancanti in `ui_overview.md`
 - Implementare componenti finanziari e board
 - Validare integrazione completa sistema
+- Finalizzare esportazione `dist/` per deploy

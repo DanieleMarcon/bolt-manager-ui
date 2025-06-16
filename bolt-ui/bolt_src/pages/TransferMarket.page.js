@@ -158,7 +158,7 @@ export default class TransferMarketPage {
   renderNegotiationPanel() {
     const container = document.getElementById('negotiationPanel');
     
-    new NegotiationPanel(container, {
+    new NegotiationPanel(container,{
       
       player: this.selectedPlayer,
       maxBudget: this.budget.available,
