@@ -7,6 +7,36 @@ Aggiornato dinamicamente durante la fase di audit dei file.
 
 ---
 
+## 📦 COMPONENTI IMPLEMENTATI (Aggiornamento Recente)
+
+### ✅ Batch Precedente (Completato)
+- `PlayerTrainingCard` – Scheda allenamento giocatore con selezione e progressi
+- `FitnessChart` – Grafico SVG evoluzione fitness con controlli temporali
+- `StaffCard` – Card membro staff con competenze e azioni
+- `StaffList` – Lista completa staff con filtri e ordinamento
+- `CompetencyChart` – Radar chart SVG competenze staff
+
+### ✅ Batch Attuale (Completato)
+- `LineupSelector` – Selezione formazione con campo interattivo e drag&drop
+- `MatchSummary` – Riepilogo completo partita con statistiche e highlights
+- `StatisticsChart` – Grafici comparativi squadre (possesso, tiri, passaggi)
+- `KeyMoments` – Timeline momenti salienti con autoplay e filtri
+- `DayAdvancer` – Avanzamento temporale con anteprima eventi
+- `UpcomingEvents` – Lista eventi imminenti con filtri e export
+
+---
+
+## 📄 PAGINE AGGIORNATE
+
+### ✅ Pagine Completate
+- `MatchSimulation.page.js` – Integrato `LineupSelector` con simulazione live
+- `MatchAnalysis.page.js` – Integrati `MatchSummary`, `StatisticsChart`, `KeyMoments`
+- `CalendarView.page.js` – Integrati `DayAdvancer`, `UpcomingEvents`
+- `TrainingManagement.page.js` – Integrati `PlayerTrainingCard`, `FitnessChart`
+- `StaffManagement.page.js` – Integrati `StaffCard`, `StaffList`, `CompetencyChart`
+
+---
+
 ## 📦 COMPONENTI NON DOCUMENTATI (Batch 1–9)
 
 ### Batch 1
@@ -29,13 +59,7 @@ Aggiornato dinamicamente durante la fase di audit dei file.
 | ----------------------- | -------------------------------------------------------- |
 | `SettingsTabNavigation` | ❌ Aggiungere a `ui_overview.md` → sezione `Impostazioni` |
 
----
-
-## 📦 COMPONENTI DOCUMENTATI (Batch 4–10)
-
-Tutti i componenti analizzati nei batch 4–9 risultano già **completamente documentati** in `ui_overview.md` e, dove previsto, in `modules_overview.md`.
-
-### Eccezioni dal Batch 10:
+### Batch 10
 
 | Componente        | Azione Necessaria                                               |
 | ----------------- | --------------------------------------------------------------- |
@@ -47,22 +71,15 @@ Tutti i componenti analizzati nei batch 4–9 risultano già **completamente doc
 
 | Componente           | Azione Necessaria                                            |
 | -------------------- | ------------------------------------------------------------ |
-| `CompetencyChart`    | ❌ Creare componente documentato in `StaffManagement.page`    |
 | `ContractDetails`    | ❌ Creare componente per dettagli contrattuali                |
-| `DayAdvancer`        | ❌ Creare componente per avanzamento rapido giorni            |
-| `FitnessChart`       | ❌ Creare componente per stato di forma                       |
 | `HistoryTimeline`    | ❌ Creare timeline storico giocatore/squadra                  |
-| `LineupSelector`     | ❌ Creare componente per selezione titolari                   |
-| `MatchSummary`       | ❌ Creare componente di riepilogo completo match              |
+| `MatchSummary`       | ✅ **COMPLETATO** - Riepilogo completo match              |
 | `NegotiationPanel`   | ❌ Creare pannello avanzato per negoziazione                  |
 | `PlayerRatings`      | ❌ Creare tabella valutazioni giocatori                       |
 | `PlayerSearch`       | ❌ Creare barra di ricerca avanzata giocatori                 |
-| `PlayerTrainingCard` | ❌ Creare scheda allenamento singolo giocatore                |
 | `SessionList`        | ❌ Creare elenco sessioni salvate                             |
-| `StaffCard`          | ❌ Creare scheda per membro staff                             |
-| `StaffList`          | ❌ Creare lista staff completo                                |
-| `StatisticsChart`    | ❌ Creare grafico avanzato statistiche                        |
-| `UpcomingEvents`     | ❌ Creare lista eventi imminenti in `Dashboard.page` o simili |
+| `StatisticsChart`    | ✅ **COMPLETATO** - Grafico avanzato statistiche          |
+| `UpcomingEvents`     | ✅ **COMPLETATO** - Lista eventi imminenti                |
 | `RequestBoardButton` | ❌ Creare bottone interattivo per invio richiesta board       |
 
 ## 🧩 MODULI NON ANCORA IMPLEMENTATI MA PREVISTI
@@ -85,7 +102,7 @@ Tutti i componenti analizzati nei batch 4–9 risultano già **completamente doc
 | `board_feedback      |  ✅ Creato: fiducia, soglie esonero, richieste board              |
 | `scouting_accuracy`  |  ✅ Creato: accuratezza valutazioni scouting                      |
 | `press_releases`     |  ✅ Creato: (opzionale): comunicazioni stampa e media             |
-| `shortlist`          |  ✅ Creato: elenco osservati dell’utente                          |
+| `shortlist`          |  ✅ Creato: elenco osservati dell'utente                          |
 | `attribute_masking`  |  ✅ Creato: livello mascheramento degli attributi non scoperti    |
 | `discovery_level`    |  ✅ Creato: grado di osservazione raggiunto per ciascun giocatore |
 
@@ -112,7 +129,7 @@ Tutti i componenti analizzati nei batch 4–9 risultano già **completamente doc
 
 | File                   | Azione Necessaria                                                               |
 | ---------------------- | ------------------------------------------------------------------------------- |
-| `ui_overview.md`       | Aggiungere: `SponsorBanner`, `SettingsTabNavigation`, `RequestBoardButton`      |
+| `ui_overview.md`       | ✅ **AGGIORNATO** - Aggiunti tutti i nuovi componenti match/calendario      |
 | `modules_overview.md`  | Aggiungere: `ContractDetailsPanel`, `TacticalPreview`, `BudgetTracker`          |
 | `datasets_overview.md` | Aggiungere: `finances`, `board_feedback`, `scouting_accuracy`                   |
 | `flows_overview.md`    | Aggiungere: `Finance_Update`, `Board_Evaluate`, `Scouting_Discover` (da creare) |
@@ -125,7 +142,7 @@ Tutti i componenti analizzati nei batch 4–9 risultano già **completamente doc
 | File         | Azione Suggerita                                                   |
 | ------------ | ------------------------------------------------------------------ |
 | `index.html` | Aggiungere sezione sidebar "📊 Finanze" e "🏛️ Direzione"          |
-| `main.js`    | Aggiungere rotte: `FinanceOverview.page`, `Board.page`             |
+| `main.js`    | ✅ **AGGIORNATO** - Aggiunte rotte per tutte le nuove pagine    |
 | `style.css`  | (Opzionale) Stili personalizzati: `BudgetTracker`, `SponsorBanner` |
 
 ---
@@ -140,11 +157,51 @@ Tutti i componenti analizzati nei batch 4–9 risultano già **completamente doc
 | `TacticalSetup.page`     | ✅ Creato e collegato al routing               |
 | `TeamManagement.page`    | ✅ Creato e collegato al routing               |
 | `TrainingManagement.page`| ✅ Creato e collegato al routing               |
+| `MatchSimulation.page`   | ✅ **COMPLETATO** - Integrato LineupSelector |
+| `MatchAnalysis.page`     | ✅ **COMPLETATO** - Integrati tutti i componenti |
+| `CalendarView.page`      | ✅ **COMPLETATO** - Integrati DayAdvancer e UpcomingEvents |
 
+---
+
+## 🎯 STATO ATTUALE - FASE 8B COMPLETATA
+
+### ✅ Implementazioni Recenti:
+
+**Componenti Match/Calendar (6 nuovi componenti)**:
+- `LineupSelector`: Selezione formazione interattiva con drag&drop
+- `MatchSummary`: Riepilogo completo partita con export e condivisione
+- `StatisticsChart`: Grafici comparativi avanzati (possesso, tiri, passaggi)
+- `KeyMoments`: Timeline momenti salienti con autoplay e filtri
+- `DayAdvancer`: Avanzamento temporale con anteprima eventi
+- `UpcomingEvents`: Lista eventi imminenti con filtri avanzati
+
+**Pagine Aggiornate (3 pagine)**:
+- `MatchSimulation.page.js`: Simulazione completa con formazione
+- `MatchAnalysis.page.js`: Analisi post-partita completa
+- `CalendarView.page.js`: Calendario avanzato con gestione eventi
+
+**Funzionalità Avanzate**:
+- Drag & drop per formazioni
+- Grafici SVG nativi interattivi
+- Timeline con autoplay
+- Avanzamento temporale con preview
+- Export/import dati
+- Filtri avanzati
+- Responsive design completo
+
+### 🏆 Risultati Raggiunti:
+- **Simulazione Partite**: Sistema completo dalla formazione all'analisi
+- **Gestione Calendario**: Avanzamento temporale e pianificazione eventi
+- **Analisi Avanzate**: Grafici interattivi e momenti salienti
+- **UX Migliorata**: Componenti intuitivi e feedback immediato
+- **Modularità**: Componenti riutilizzabili e ben documentati
+
+La **Fase 8B** è completamente implementata! Il sistema di simulazione partite e gestione calendario è ora completo e funzionale.
 
 ---
 
 ## 🔜 PROSSIMI STEP
 
-- Validare implementazione `FinanceOverview.page`
-- Avvio sviluppo componenti Board e moduli media
+- Completare documentazione componenti mancanti in `ui_overview.md`
+- Implementare componenti finanziari e board
+- Validare integrazione completa sistema
