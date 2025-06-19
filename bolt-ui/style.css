@@ -171,6 +171,7 @@ button {
   display: none;
   justify-content: center;
   align-items: center;
+  z-index: 1100;
 }
 .modal {
   background-color: var(--surface);
@@ -179,6 +180,57 @@ button {
   width: 90%;
   max-width: 600px;
   box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+}
+
+/* Team selection list */
+.team-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.team-item {
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  font: inherit;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.team-item.selected {
+  background-color: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* Player selection list */
+.player-select-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.player-select-item {
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.player-select-item:hover {
+  background-color: var(--primary);
+  color: #fff;
 }
 
 /* TOAST */
@@ -319,9 +371,116 @@ button {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .request-board-btn:hover {
   background-color: #d97706;
   transform: scale(1.02);
+}
+
+/* ===========================
+   🆕 COMPONENTI AGGIUNTIVI
+=========================== */
+
+/* Sponsor Banner */
+.sponsor-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.sponsor-banner img {
+  height: 24px;
+  max-width: 100px;
+  margin-left: 8px;
+  object-fit: contain;
+}
+
+/* Request Board Button */
+.request-board-btn {
+  background-color: var(--warning);
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.request-board-btn:hover {
+  background-color: #d97706;
+  transform: scale(1.02);
+}
+
+/* Initial welcome overlay */
+.welcome-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.welcome-screen.hidden {
+  display: none;
+}
+
+/* ← Inserisci qui, subito dopo `.request-board-btn:hover`: */
+
+/* Budget Tracker */
+.budget-tracker {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+.budget-tracker .balance {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.budget-tracker .chart {
+  margin-top: 16px;
+}
+
+/* Contract Details Panel */
+.contract-details-panel {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+.contract-details-panel h4 {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+.contract-details-panel p {
+  margin: 4px 0;
+}
+
+/* Settings Tab Navigation */
+.settings-tab-navigation {
+  display: flex;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.settings-tab-navigation .tab {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.settings-tab-navigation .tab.active {
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
 }
 
 /* ===========================
@@ -335,4 +494,42 @@ button {
 .tv-focus:focus {
   outline: 3px solid yellow;
   transform: scale(1.05);
+}
+
+/* Utility */
+.hidden {
+  display: none !important;
+}
+
+/* Match simulation events */
+.match-events {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.match-event {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.match-event:last-child {
+  border-bottom: none;
+}
+
+.match-event .event-time {
+  font-weight: 600;
+  color: var(--primary);
+  width: 32px;
+}
+
+.match-event .event-icon {
+  width: 20px;
+  text-align: center;
 }

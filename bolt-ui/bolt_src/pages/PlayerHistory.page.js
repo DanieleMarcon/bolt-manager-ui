@@ -1,178 +1,182 @@
-<div class="player-history-page">
-  <div class="page-header">
-    <h2 class="page-title">Storico Giocatore</h2>
-    <div class="page-actions">
-      <button class="button button-secondary export-history-btn">
-        📊 Esporta Storico
-      </button>
-    </div>
-  </div>
+import HistoryTimeline from '../components/HistoryTimeline.js';
 
-  <div class="player-selection-section">
-    <div class="selection-container">
-      <div class="player-selector-wrapper">
-        <div class="player-selector-dropdown"></div>
-      </div>
-      <div class="time-range-wrapper">
-        <div class="time-range-filter-container"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="history-content">
-    <div class="history-main">
-      <div class="attribute-progress-section">
-        <div class="section-header">
-          <h3>Evoluzione Attributi</h3>
-        </div>
-        <div class="attribute-progress-chart-container"></div>
-      </div>
-
-      <div class="statistics-section">
-        <div class="section-header">
-          <h3>Statistiche Dettagliate</h3>
-        </div>
-        <div class="statistics-table-container"></div>
-      </div>
-    </div>
-
-    <div class="history-sidebar">
-      <div class="events-timeline-section">
-        <div class="section-header">
-          <h3>Timeline Eventi</h3>
-        </div>
-        <div class="event-timeline-container"></div>
-      </div>
-
-      <div class="comparison-section">
-        <div class="section-header">
-          <h3>Confronto Periodi</h3>
-        </div>
-        <div class="comparison-tool-container"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sponsor banner -->
-  <div class="sponsor-banner-container"></div>
-</div>
-
-<style>
-.player-history-page {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text);
-  margin: 0;
-}
-
-.player-selection-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.selection-container {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.player-selector-wrapper {
-  flex: 1;
-  min-width: 300px;
-}
-
-.time-range-wrapper {
-  flex: 2;
-  min-width: 400px;
-}
-
-.history-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-}
-
-.history-main {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.history-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.section-header {
-  margin-bottom: 16px;
-}
-
-.section-header h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0;
-}
-
-.attribute-progress-section,
-.statistics-section,
-.events-timeline-section,
-.comparison-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.sponsor-banner-container {
-  margin-top: 16px;
-}
-
-/* Responsive styles */
-@media (max-width: 1200px) {
-  .history-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .history-sidebar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .selection-container {
-    flex-direction: column;
-  }
-  
-  .history-sidebar {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
-
-<script type="module">
 export default class PlayerHistoryPage {
   constructor() {
-    this.initializePage();
+    this.container = document.getElementById('pageContent');
+    this.render();
+  }
+
+async render() {
+    this.container.innerHTML = `
+      <div class="player-history-page">
+        <div class="page-header">
+          <h2 class="page-title">Storico Giocatore</h2>
+          <div class="page-actions">
+            <button class="button button-secondary export-history-btn">📊 Esporta Storico</button>
+          </div>
+        </div>
+      
+        <div class="player-selection-section">
+          <div class="selection-container">
+            <div class="player-selector-wrapper">
+              <div class="player-selector-dropdown"></div>
+            </div>
+            <div class="time-range-wrapper">
+              <div class="time-range-filter-container"></div>
+            </div>
+          </div>
+        </div>
+      
+          <div class="history-content">
+          <div class="history-main">
+            <div class="attribute-progress-section">
+              <div class="section-header">
+                <h3>Evoluzione Attributi</h3>
+              </div>
+              <div class="attribute-progress-chart-container"></div>
+            </div>
+
+            <div class="statistics-section">
+              <div class="section-header">
+                <h3>Statistiche Dettagliate</h3>
+              </div>
+              <div class="statistics-table-container"></div>
+            </div>
+          </div>
+
+          <div class="history-sidebar">
+            <div class="events-timeline-section">
+              <div class="section-header">
+                <h3>Timeline Eventi</h3>
+              </div>
+              <div class="event-timeline-container"></div>
+            </div>
+
+            <div class="comparison-section">
+              <div class="section-header">
+                <h3>Confronto Periodi</h3>
+              </div>
+              <div class="comparison-tool-container"></div>
+            </div>
+          </div>
+        </div>
+
+            <div class="sponsor-banner-container"></div>
+      </div>
+
+            <style>
+        .player-history-page {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+          max-width: 1400px;
+          margin: 0 auto;
+        }
+
+        .page-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+
+        .page-title {
+          font-size: 24px;
+          font-weight: 700;
+          color: var(--text);
+          margin: 0;
+        }
+
+        .player-selection-section {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          padding: 20px;
+        }
+
+        .selection-container {
+          display: flex;
+          gap: 24px;
+          flex-wrap: wrap;
+        }
+
+        .player-selector-wrapper {
+          flex: 1;
+          min-width: 300px;
+        }
+
+        .time-range-wrapper {
+          flex: 2;
+          min-width: 400px;
+        }
+
+        .history-content {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 24px;
+        }
+
+        .history-main {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .history-sidebar {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+        }
+
+        .section-header {
+          margin-bottom: 16px;
+        }
+
+        .section-header h3 {
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--text);
+          margin: 0;
+        }
+
+        .attribute-progress-section,
+        .statistics-section,
+        .events-timeline-section,
+        .comparison-section {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          padding: 20px;
+        }
+
+        .sponsor-banner-container {
+          margin-top: 16px;
+        }
+
+        @media (max-width: 1200px) {
+          .history-content {
+            grid-template-columns: 1fr;
+          }
+
+          .history-sidebar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .selection-container {
+            flex-direction: column;
+          }
+
+          .history-sidebar {
+            grid-template-columns: 1fr;
+          }
+        }
+      </style>
+    `;
+
+    await this.initializePage();
   }
 
   async initializePage() {
@@ -199,11 +203,45 @@ export default class PlayerHistoryPage {
     timeRangeFilter.className = 'time-range-filter';
     timeRangeContainer.appendChild(timeRangeFilter);
 
-    document.querySelector('.attribute-progress-chart-container')?.appendChild(document.createElement('div')).className = 'attribute-progress-chart';
-    document.querySelector('.statistics-table-container')?.appendChild(document.createElement('div')).className = 'statistics-table';
-    document.querySelector('.event-timeline-container')?.appendChild(document.createElement('div')).className = 'event-timeline';
-    document.querySelector('.comparison-tool-container')?.appendChild(document.createElement('div')).className = 'comparison-tool';
-    document.querySelector('.sponsor-banner-container')?.appendChild(document.createElement('div')).className = 'sponsor-banner';
+    const attrContainer = document.querySelector('.attribute-progress-chart-container');
+    if (attrContainer) {
+      const el = document.createElement('div');
+      el.className = 'attribute-progress-chart';
+      attrContainer.appendChild(el);
+    }
+
+    const statsContainer = document.querySelector('.statistics-table-container');
+    if (statsContainer) {
+      const el = document.createElement('div');
+      el.className = 'statistics-table';
+      statsContainer.appendChild(el);
+    }
+    
+    // Initialize HistoryTimeline component
+    const timelineContainer = document.querySelector('.event-timeline-container');
+    const timelineElement = document.createElement('div');
+    timelineElement.className = 'event-timeline';
+    timelineContainer.appendChild(timelineElement);
+    
+    // Create HistoryTimeline instance
+    timelineElement.historyTimeline = new HistoryTimeline(timelineElement, {
+      events: [],
+      onEventClick: (event) => this.handleEventClick(event)
+    });
+    
+    const comparisonContainer = document.querySelector('.comparison-tool-container');
+    if (comparisonContainer) {
+      const el = document.createElement('div');
+      el.className = 'comparison-tool';
+      comparisonContainer.appendChild(el);
+    }
+
+    const sponsorContainer = document.querySelector('.sponsor-banner-container');
+    if (sponsorContainer) {
+      const el = document.createElement('div');
+      el.className = 'sponsor-banner';
+      sponsorContainer.appendChild(el);
+    }
   }
 
   async loadInitialData() {
@@ -290,26 +328,26 @@ export default class PlayerHistoryPage {
       date.setDate(today.getDate() - i * 15);
       const types = ['match', 'training', 'injury', 'transfer'];
       const type = types[Math.floor(Math.random() * types.length)];
-      let title = '', content = '';
+      let title = '', description = '';
       switch (type) {
         case 'match':
           title = `Partita vs ${['Juventus', 'Inter', 'Roma', 'Napoli', 'Lazio'][Math.floor(Math.random() * 5)]}`;
-          content = `Gol: ${Math.floor(Math.random() * 2)}, Assist: ${Math.floor(Math.random() * 2)}`;
+          description = `Gol: ${Math.floor(Math.random() * 2)}, Assist: ${Math.floor(Math.random() * 2)}`;
           break;
         case 'training':
           title = `Allenamento ${['Tattico', 'Fisico', 'Tecnico'][Math.floor(Math.random() * 3)]}`;
-          content = `Miglioramento: +${(Math.random() * 0.5).toFixed(1)} in ${['pace', 'shooting', 'passing'][Math.floor(Math.random() * 3)]}`;
+          description = `Miglioramento: +${(Math.random() * 0.5).toFixed(1)} in ${['pace', 'shooting', 'passing'][Math.floor(Math.random() * 3)]}`;
           break;
         case 'injury':
           title = 'Infortunio';
-          content = `${['Lieve', 'Moderato', 'Grave'][Math.floor(Math.random() * 3)]} - ${Math.floor(Math.random() * 14) + 1} giorni di recupero`;
+          description = `${['Lieve', 'Moderato', 'Grave'][Math.floor(Math.random() * 3)]} - ${Math.floor(Math.random() * 14) + 1} giorni di recupero`;
           break;
         case 'transfer':
           title = 'Trasferimento';
-          content = `Trasferito da ${['Juventus', 'Inter', 'Roma'][Math.floor(Math.random() * 3)]}`;
+          description = `Trasferito da ${['Juventus', 'Inter', 'Roma'][Math.floor(Math.random() * 3)]}`;
           break;
       }
-      events.push({ id: i + 1, type, title, content, date: date.toISOString(), importance: Math.floor(Math.random() * 10) + 1 });
+      events.push({ id: i + 1, type, title, description, date: date.toISOString(), importance: Math.floor(Math.random() * 10) + 1 });
     }
     return events;
   }
@@ -326,7 +364,14 @@ export default class PlayerHistoryPage {
 
   updateEventTimeline(data) {
     const timeline = document.querySelector('.event-timeline');
-    timeline?.eventTimeline?.setEvents(data);
+    if (timeline?.historyTimeline) {
+      timeline.historyTimeline.setEvents(data);
+    }
+  }
+
+  handleEventClick(event) {
+    console.log('Event clicked:', event);
+    this.showToast(`Evento selezionato: ${event.title}`, 'info');
   }
 
   bindEvents() {
@@ -358,11 +403,8 @@ export default class PlayerHistoryPage {
   showSuccess(message) {
     window.dispatchEvent(new CustomEvent('showToast', { detail: { message, type: 'success' } }));
   }
+
+  showToast(message, type = 'info') {
+    window.dispatchEvent(new CustomEvent('showToast', { detail: { message, type } }));
+  }
 }
-
-// Bootstrap automatico
-document.addEventListener('DOMContentLoaded', () => {
-  new PlayerHistoryPage();
-});
-
-</script>
