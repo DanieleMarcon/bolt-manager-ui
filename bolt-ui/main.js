@@ -237,8 +237,10 @@ function startNewGame() {
   const teamItems = TEAM_CHOICES.map(
     t => `<li class="team-item" data-team="${t}">
       <div class="team-badge">⚽</div>
-      <div class="team-name">${t}</div>
-      <div class="team-league">Serie D</div>
+      <div class="team-info">
+        <div class="team-name">${t}</div>
+        <div class="team-league">Serie D</div>
+      </div>
     </li>`
   ).join("");
 
@@ -246,9 +248,11 @@ function startNewGame() {
     <div class="modal">
       <div class="modal-header">
         <h3>🏆 Inizia la tua Carriera</h3>
-        <p>Scegli la squadra che guiderai verso la gloria</p>
+        <button class="modal-close-btn" id="modalCloseBtn">×</button>
       </div>
       <div class="modal-body">
+        <p class="modal-subtitle">Scegli la squadra che guiderai verso la gloria</p>
+        
         <div class="coach-setup">
           <label for="coachNameInput" class="form-label">
             <span class="label-icon">👤</span>
@@ -277,6 +281,8 @@ function startNewGame() {
 
   let selectedTeam = null;
   const listItems = modalContainer.querySelectorAll('.team-item');
+  
+  // Team selection logic
   listItems.forEach(li => {
     li.addEventListener('click', () => {
       listItems.forEach(i => i.classList.remove('selected'));
@@ -286,16 +292,32 @@ function startNewGame() {
       // Add selection sound effect (visual feedback)
       li.style.transform = 'scale(0.95)';
       setTimeout(() => li.style.transform = '', 150);
+      
+      // Enable confirm button when team is selected
+      const confirmBtn = modalContainer.querySelector('#confirmNewGameBtn');
+      confirmBtn.disabled = false;
+      confirmBtn.style.opacity = '1';
     });
   });
 
-  modalContainer.querySelector('#cancelNewGameBtn')
-    .addEventListener('click', () => {
-      modalContainer.style.display = 'none';
-      modalContainer.innerHTML = '';
-      showWelcome(true);
-    });
+  // Modal close handlers
+  const closeModal = () => {
+    modalContainer.style.display = 'none';
+    modalContainer.innerHTML = '';
+    showWelcome(true);
+  };
 
+  modalContainer.querySelector('#modalCloseBtn').addEventListener('click', closeModal);
+  modalContainer.querySelector('#cancelNewGameBtn').addEventListener('click', closeModal);
+
+  // Click outside to close
+  modalContainer.addEventListener('click', (e) => {
+    if (e.target === modalContainer) {
+      closeModal();
+    }
+  });
+
+  // Confirm button handler
   modalContainer.querySelector('#confirmNewGameBtn')
     .addEventListener('click', async () => {
       const userName = modalContainer.querySelector('#coachNameInput').value.trim();
@@ -306,6 +328,7 @@ function startNewGame() {
 
       // Show loading state
       const confirmBtn = modalContainer.querySelector('#confirmNewGameBtn');
+      const originalContent = confirmBtn.innerHTML;
       confirmBtn.innerHTML = '<span>⏳</span><span>Creazione in corso...</span>';
       confirmBtn.disabled = true;
 
@@ -361,10 +384,15 @@ function startNewGame() {
       } catch (error) {
         console.error('Errore avvio:', error);
         showFootballToast('❌ Errore durante la creazione della carriera', 'error');
-        confirmBtn.innerHTML = '<span>🚀</span><span>Inizia Carriera</span>';
+        confirmBtn.innerHTML = originalContent;
         confirmBtn.disabled = false;
       }
     });
+
+  // Initially disable confirm button
+  const confirmBtn = modalContainer.querySelector('#confirmNewGameBtn');
+  confirmBtn.disabled = true;
+  confirmBtn.style.opacity = '0.5';
 }
 
 // Enhanced load game
@@ -455,7 +483,7 @@ function showWelcome(show) {
 function initializeApp() {
   console.log("⚽ Inizializzazione Allenatore Nato...");
   
-  // Add loading styles
+  // Add enhanced styles for the modal
   const style = document.createElement('style');
   style.textContent = `
     .page-loading {
@@ -606,18 +634,11 @@ function initializeApp() {
       }
     }
     
-    .modal-header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    
-    .modal-header h3 {
-      margin-bottom: 0.5rem;
-    }
-    
-    .modal-header p {
+    .modal-subtitle {
       color: var(--text-secondary);
-      margin: 0;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-size: 1.125rem;
     }
     
     .coach-setup {
@@ -630,6 +651,7 @@ function initializeApp() {
       gap: 0.5rem;
       margin-bottom: 0.5rem;
       font-weight: 500;
+      color: var(--text);
     }
     
     .form-input {
@@ -640,6 +662,7 @@ function initializeApp() {
       background: var(--surface-elevated);
       color: var(--text);
       font-family: inherit;
+      font-size: 1rem;
     }
     
     .form-input:focus {
@@ -651,6 +674,18 @@ function initializeApp() {
     .team-selection h4 {
       margin-bottom: 1rem;
       color: var(--text-secondary);
+      font-size: 1rem;
+    }
+    
+    .team-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      max-height: 300px;
+      overflow-y: auto;
     }
     
     .team-item {
@@ -658,31 +693,52 @@ function initializeApp() {
       align-items: center;
       gap: 1rem;
       padding: 1rem;
+      background: var(--surface-elevated);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
       cursor: pointer;
-      transition: var(--transition);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .team-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-solid);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .team-item.selected {
+      background: linear-gradient(135deg, var(--primary-solid), var(--stadium-blue-dark));
+      color: white;
+      border-color: var(--primary-solid);
+      box-shadow: 0 0 20px rgba(30, 64, 175, 0.3);
     }
     
     .team-badge {
       font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    
+    .team-info {
+      flex: 1;
     }
     
     .team-name {
       font-weight: 600;
-      flex: 1;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
     }
     
     .team-league {
-      font-size: 0.875rem;
-      color: var(--text-muted);
+      font-size: 0.75rem;
+      opacity: 0.8;
     }
     
     .modal-footer {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       gap: 1rem;
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
+      margin-top: 0;
     }
     
     .notification-badge {
