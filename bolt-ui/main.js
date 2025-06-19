@@ -3,16 +3,16 @@ import { GameFlow_StartNewGame } from "../bolt_src/flows/GameFlow_StartNewGame.j
 import { Session_Load } from "../bolt_src/flows/Session_Load.js";
 import { Session_Save } from "../bolt_src/flows/Session_Save.js";
 
-// Elenco squadre disponibili per l'utente
+// Enhanced team choices with more football atmosphere
 const TEAM_CHOICES = [
-  'Aureliana',
-  'Brioschese',
-  'Cambiaghese',
+  'Aureliana FC',
+  'Brioschese United',
+  'Cambiaghese Calcio',
   'Città di Monza',
-  'Fonas',
+  'Fonas Athletic',
   'Fusion Multisport',
-  'Grezzago',
-  'Masate',
+  'Grezzago FC',
+  'Masate United',
   'Monsignor Orsenigo',
   'Novese Gunners',
   'Nuova Frontiera',
